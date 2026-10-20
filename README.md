@@ -11,8 +11,8 @@ A small collection of browser-based tools that fetch and display live public dat
 ## Live Demo
 
 You can test the live apps directly in your browser:
-* **Clinical Research Tool:** [Open Clinical Trials Finder](https://jimmymuteh.github.io/API-Powered-Application/surgeon.html)
-* **Full Utility Hub:** [Open Main Dashboard](https://jimmymuteh.github.io/API-Powered-Application/)
+* **Clinical Research Tool:** [Open Clinical Trials Finder](https://jimmymuteh.github.io/API-Powered-Applications/surgeon.html)
+* **Full API-Powered Applications:** [Open Main Dashboard](https://jimmymuteh.github.io/API-Powered-Applications/)
 
 ## How to Run Locally
 
