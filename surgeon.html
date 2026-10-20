@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Country Info</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+    h1 { color: #1F4E79; }
+    #result { background: #f7f9fc; border: 1px solid #d0dff0; border-radius: 8px; padding: 20px; margin-top: 20px; }
+    button { background: #2E75B6; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; }
+    button:hover { background: #1F4E79; }
+  </style>
+</head>
+<body>
+<h1>Clinical Trials Info</h1>
+<input type="text" id="trialInput" placeholder="Enter a medical condition or trial ID" style="padding:8px; font-size:16px; width:250px;">
+<button onclick="loadTrial()">Search</button>
+<div id="result">Enter a medical condition or trial ID above and click Search.</div>
+
+<script>
+
+async function loadTrial() {
+  const trialQuery = document.getElementById("trialInput").value.trim();
+
+  if (!trialQuery) {
+    document.getElementById("result").innerHTML = "Please enter a medical condition or trial ID.";
+    return;
+  }
+
+  document.getElementById("result").innerHTML = "Loading...";
+
+  try {
+    const response = await fetch(`https://clinicaltrials.gov/api/v2/studies?query.term=${encodeURIComponent(trialQuery)}&pageSize=5`);
+
+    if (!response.ok) {
+      throw new Error(`Clinical trials not found (${response.status})`);
+    }
+
+    const data = await response.json();
+    const studies = data.studies;
+
+    if (studies.length === 0) {
+      document.getElementById("result").innerHTML = "No clinical trials found for the given query.";
+      return;
+    }
+
+    let resultHTML = "<h2>Clinical Trials Found:</h2>";
+    // Loop through studies using the v2 nested schema structure
+    studies.forEach(item => {
+      const protocol = item.protocolSection;
+      const nctId = protocol.identificationModule?.nctId || "N/A";
+      const condition = protocol.conditionsModule?.conditions?.[0] || "N/A";
+      const briefTitle = protocol.identificationModule?.briefTitle || "N/A";
+      const overallStatus = protocol.statusModule?.overallStatus || "N/A";
+
+      resultHTML += `
+        <div style="margin-bottom: 15px; border-bottom: 1px solid #d0dff0; padding-bottom: 10px;">
+          <p><strong>NCT ID:</strong> ${nctId}</p>
+          <p><strong>Condition:</strong> ${condition}</p>
+          <p><strong>Title:</strong> ${briefTitle}</p>
+          <p><strong>Status:</strong> <span style="color: #2E75B6; font-weight: bold;">${overallStatus}</span></p>
+        </div>
+      `;
+    });
+
+    document.getElementById("result").innerHTML = resultHTML;
+  } catch (error) {
+    document.getElementById("result").innerHTML = `Error: ${error.message}`;
+  }
+}
+</script>
+</body>
+</html>
